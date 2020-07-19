@@ -16,8 +16,8 @@ namespace MyPension.WebAPI.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DeclareHoldings(IList<HoldingModel> holdings)
+        [HttpPost("{porfolioId}/holdings")]
+        public async Task<IActionResult> DeclareHoldings([FromRoute] string portfolioId, [FromBody] IList<HoldingModel> holdings)
         {
             throw new NotImplementedException();
         }
