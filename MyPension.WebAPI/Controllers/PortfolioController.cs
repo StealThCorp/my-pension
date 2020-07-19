@@ -11,13 +11,19 @@ namespace MyPension.WebAPI.Controllers
     public class PortfolioController : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetNpsPortfolio()
+        public Task<IActionResult> GetNpsPortfolio()
         {
             throw new NotImplementedException();
         }
 
         [HttpPost("{porfolioId}/holdings")]
-        public async Task<IActionResult> DeclareHoldings([FromRoute] string portfolioId, [FromBody] IList<HoldingModel> holdings)
+        public Task<IActionResult> DeclareHoldings([FromRoute] string portfolioId, [FromBody] IList<HoldingModel> holdings)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPost("{porfolioId}/simulation")]
+        public Task<IActionResult> GetSimulation([FromRoute] string portfolioId)
         {
             throw new NotImplementedException();
         }
