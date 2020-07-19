@@ -1,0 +1,5 @@
+template_path: role.yaml
+stack_tags:
+  Environment: 'dev'
+parameters:
+  Environment : dev

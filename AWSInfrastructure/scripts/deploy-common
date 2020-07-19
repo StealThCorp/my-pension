@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+ 
+sceptre  --ignore-dependencies launch  -y $1/vpc.yaml
+sceptre  --ignore-dependencies launch  -y $1/s3.yaml
+sceptre  --ignore-dependencies launch  -y $1/sg.yaml
+sceptre  --ignore-dependencies launch  -y $1/role.yaml
+sceptre  --ignore-dependencies launch  -y $1/aurora.yaml
+
+
+
+
+
+

@@ -1,0 +1,6 @@
+template_path: sg.yaml
+stack_tags: 
+  Environment: 'dev'
+parameters:
+  Environment : dev
+  VpcId: !stack_output_external pension-module-common-dev-vpc::VPC

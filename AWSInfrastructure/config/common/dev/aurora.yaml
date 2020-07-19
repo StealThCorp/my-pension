@@ -1,0 +1,9 @@
+template_path: aurora.yaml
+stack_tags:
+  Environment: 'dev'
+parameters:
+  Environment: dev
+  VpcId: !stack_output_external pension-module-common-dev-vpc::VPC
+  Subnets:
+    - !stack_output_external pension-module-common-dev-vpc::PrivateSubnet1
+    - !stack_output_external pension-module-common-dev-vpc::PrivateSubnet2

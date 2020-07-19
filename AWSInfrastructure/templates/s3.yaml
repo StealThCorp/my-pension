@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description:  S3 Buckets 
+
+Parameters:
+  S3BucketName:
+    Type: String
+    Description: bucket name 
+
+
+Resources:
+  S3BucketName:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref  S3BucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256 
+
+
+Outputs:
+  S3BucketName:
+    Value: !Ref S3BucketName
+  S3BucketNameArn:
+    Value: !GetAtt S3BucketName.Arn

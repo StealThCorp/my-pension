@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Creates an API gateway 
+
+Parameters:
+
+  ApplicationName:
+    Type: String
+    Description: Name of application 
+
+  Environment:
+    Description: 'Environment name: Prod, Dev, Test, etc.'
+    Type: String
+    Default: 'feature'
+
+  BuildNumber:
+    Type: String
+    Description: Name of application build
+
+  StageName:
+    Type: String
+    Description: Major version of API
+
+  S3BucketName:
+    Type: String
+    Description: bucket name
+
+  LambdaWithStage:
+    Type: String
+    Description: stage name of deployment
+
+  LambdaArn:
+    Type: String
+    Description: arn of lambda
+
+  CustomDeployerFunctionArn:
+    Type: String
+    Description: ARN of the custom deployment lambda
+ 
+  LogGroupRetentionDays:
+    Type: Number
+    Description: Retention Days for Lambda log
+
+  ClientCertificate:
+    Type: String
+    Description: Id of the API Gateway client certificate
+
+  WebAclId:
+    Type: String
+    Description: The id of the WebACL
+
+Conditions:
+
+  HasWebAclId:
+    Fn::Not:
+      - Fn::Equals: [!Ref WebAclId, ""]
+
+Resources:
+
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub "${ApplicationName}-${Environment}"
+      Description: Api Gateway for pension-aggregator
+      Body:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location:  !Sub "s3://${S3BucketName}/swagger/pension-aggregator.yaml"
+
+  WebACLAssociation:
+    Condition: HasWebAclId
+    Type: AWS::WAFRegional::WebACLAssociation 
+    Properties:
+      ResourceArn: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/stages/${StageName}
+      WebACLId: !Ref WebAclId
+
+  CustomApiDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      RestApiId: !Ref Deployment
+      Description: !Sub "Deployment for ${Environment} for build ${BuildNumber}"
+
+  DeploymentStage:
+    Type: AWS::ApiGateway::Stage
+    DependsOn:
+      - CustomApiDeployment
+    Properties:
+      DeploymentId: !Ref CustomApiDeployment
+      RestApiId: !Ref RestApi
+      StageName: !Ref StageName
+      Description: !Sub "Stage for ${Environment} for build ${BuildNumber}"
+      TracingEnabled: true
+      ClientCertificateId: !Ref ClientCertificate
+      Variables:
+        Version: !Ref StageName
+      MethodSettings:
+      - DataTraceEnabled: true
+        HttpMethod: "*"
+        LoggingLevel: INFO
+        ResourcePath: "/*"
+        MetricsEnabled: false
+
+  ApiGatewayInvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Sub "${Lambda}:${StageName}"
+      Principal: apigateway.amazonaws.com
+      SourceArn:  !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*/*"
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: RestApi
+    Properties:
+      LogGroupName: !Sub "API-Gateway-Execution-Logs_${RestApi}/v1"
+      RetentionInDays: !Ref LogGroupRetentionDays
+
+Outputs:
+  RestApiEndpoint:
+    Description: Endpoint for the api
+    Value: !Sub "https://${RestApi}.execute-api.eu-west-1.amazonaws.com/"
+  RestApiRef:
+    Value: !Ref RestApi

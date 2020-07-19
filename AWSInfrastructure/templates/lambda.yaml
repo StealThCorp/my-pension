@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: This template is to create lambda for api
+
+Parameters:
+  
+  ApiName:
+    Type: String
+    Description: it represent the name of api
+  ApiHandler:
+    Type: String
+    Description: Complete API Handler
+  S3BucketName:
+    Type: String
+    Description: bucket name
+  LambdaExecutionRole:
+    Type: String
+    Description: Name of Lambda Execution Role
+  LambdaSecurityGroup:
+    Type: String
+    Description: Name of Lambda Security Group
+  Subnets:
+    Type: CommaDelimitedList
+    Description: The list of SubnetIds
+  Environment:
+    Description: 'Environment name: Prod, Dev, Test, etc.'
+    Type: String
+    Default: 'feature'
+  BuildNumber:
+    Type: String
+    Description: Name of application build  
+  AWSAccount:
+    Type: String
+    Description: account number
+  ApiAlias:
+    Type: String
+    Description: Major version of API
+  LambdaLogRetentionDays:
+    Type: Number
+    Description: Retention Days for Lambda log
+
+Resources:
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Environment}-${ApiName}"
+      Description: it contains apis
+      Handler: !Ref ApiHandler
+      CodeUri:
+        Bucket: !Ref S3BucketName
+        Key: !Sub "${ApiName}/${ApiName}-${BuildNumber}.zip"
+      VpcConfig:
+        SecurityGroupIds:
+        - !Ref LambdaSecurityGroup
+        SubnetIds: !Ref Subnets
+      MemorySize: 512
+      Role: !Ref LambdaExecutionRole
+      Timeout: 30
+      Policies:
+        - AWSLambdaFullAccess
+      Runtime: dotnetcore3.1
+      AutoPublishAlias: !Ref ApiAlias 
+      Tracing: Active 
+      Environment:
+        Variables:
+          ASPNETCORE_ENVIRONMENT: !Ref Environment
+          APP_VERSION: !Ref BuildNumber 
+
+  ApiLogGroup: 
+    Type: AWS::Logs::LogGroup
+    DependsOn: ApiFunction 
+    Properties:
+      LogGroupName: !Join [ "", ["/aws/lambda/", !Ref ApiFunction] ] 
+      RetentionInDays: !Ref LambdaLogRetentionDays
+
+Outputs:
+  ApiFunctionName:
+    Description: Lambda function Name
+    Value: !Ref ApiFunction
+  ApiFunctionArn:
+    Description: Lambda function Arn
+    Value: !GetAtt ApiFunction.Arn
+  ApiFunctionWithStageVariable:
+    Description: Lambda function Arn with stage variable
+    Value:  !Join [ "", [!GetAtt ApiFunction.Arn, ":${stageVariables.LambdaVersion}" ]]
+  ApiFunctionAlias:
+    Description: Lambda function Alias
+    Value: !Ref ApiFunction.Alias
+  ApiCloudWatchLogGroup:
+    Description: cloudwatch log group
+    Value: !Ref ApiLogGroup

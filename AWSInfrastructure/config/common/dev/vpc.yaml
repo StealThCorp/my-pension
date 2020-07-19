@@ -1,0 +1,5 @@
+template_path: vpc.yaml
+stack_tags: 
+  Environment: 'dev'
+parameters:
+  Environment: dev 

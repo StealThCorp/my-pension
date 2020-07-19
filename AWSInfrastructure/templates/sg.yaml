@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Lambda Security Group
+
+Parameters: 
+  Environment:
+      Type: String
+      Description: Environment name
+  VpcId:
+    Type: String
+    Description: Vpc Id where to create the lambda security group 
+
+Resources:
+  LambdaSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: !Sub '${Environment}-sg'
+      GroupDescription: Lambda security group
+      VpcId: !Ref VpcId
+      Tags: 
+          - Key: Name
+            Value: !Sub '${Environment}-sg'
+
+Outputs:
+  LambdaSecurityGroupRef:
+    Value: !Ref LambdaSecurityGroup

@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS CloudFormation  AuroraServerlessDBCluster
+Parameters:
+  Environment:
+    Type: String
+    Description: Environment name
+  VpcId:
+      Type: String
+      Description: Vpc Id where to create the lambda security group
+
+  Subnets:
+    Type: CommaDelimitedList
+    Description: The list of SubnetIds
+
+Resources:
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: DB subnet group 
+      SubnetIds: !Ref Subnets
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for aurora serverless"
+      GroupName: !Sub ${Environment}-db-sg
+      VpcId:  !Ref VpcId
+
+  DBSecurityGroup01Ingress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref DBSecurityGroup
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !GetAtt DBSecurityGroup.GroupId
+
+  RDSCluster:
+    Type: 'AWS::RDS::DBCluster'
+    Properties:
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBClusterIdentifier: !Sub ${Environment}-Pension-cluster
+      DatabaseName: !Sub ${Environment}Pension
+      DBSubnetGroupName : !Ref DBSubnetGroup
+      VpcSecurityGroupIds:
+        - !GetAtt DBSecurityGroup.GroupId
+      Engine: aurora
+      EngineVersion: 5.6.10a
+      EngineMode: serverless
+      ScalingConfiguration:
+        AutoPause: true
+        MinCapacity: 2
+        MaxCapacity: 16
+        SecondsUntilAutoPause: 1000
+
+Outputs:
+  DatabaseHost:
+    Description: data base host
+    Value: !GetAtt  RDSCluster.Endpoint.Address
+  DatabaseName:
+    Value: !Sub ${Environment}Pension
+    Description: Database name

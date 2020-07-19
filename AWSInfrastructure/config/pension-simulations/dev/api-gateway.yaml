@@ -1,0 +1,15 @@
+template_path: api-gateway.yaml
+stack_tags:
+  Environment: 'dev'
+parameters:
+  ApplicationName: pension-simulations
+  Environment : dev
+  BuildNumber: !environment_variable ARTIFACT_NUMBER
+  StageName: v1
+  S3BucketName: artifact-dev
+  LambdaWithStage: !stack_output_external pension-module-dev-lambda::ApiFunctionWithStageVariable
+  CustomDeployerFunctionArn: !stack_output_external pension-module-dev-api-deployer-function::CustomDeployerFunctionArn
+  LambdaArn: !stack_output_external pension-module-dev-lambda::ApiFunctionArn
+  LogGroupRetentionDays: '7'
+  ClientCertificate: ''
+  WebAclId: ''

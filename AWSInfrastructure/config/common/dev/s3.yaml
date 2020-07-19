@@ -1,0 +1,5 @@
+template_path: s3.yaml
+stack_tags:
+  Environment: 'dev'
+parameters:
+  S3BucketName: artifact-dev

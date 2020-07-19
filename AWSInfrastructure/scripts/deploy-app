@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+ 
+
+aws s3 cp  swagger/$2.yaml s3://artifact-$1/swagger/$2.yaml
+
+sceptre --ignore-dependencies launch -y  $2/$1/lambda.yaml
+sceptre --ignore-dependencies launch -y  $2/$1/api-gateway.yaml
+
+
+
+
+
+
+

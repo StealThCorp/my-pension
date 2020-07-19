@@ -1,0 +1,16 @@
+template_path: lambda.yaml
+stack_tags:
+  Environment: 'dev'
+parameters:
+  ApiName: pension-simulations
+  ApiHandler: Pension.Simulations::Pension.Simulations.Fuction::ProcessAsync
+  S3BucketName: artifact-dev
+  LambdaExecutionRole: !stack_output_external pension-module-common-dev-role::LambdaRoleArn
+  LambdaSecurityGroup: !stack_output_external pension-module-common-sg::LambdaSecurityGroupRef
+  Subnets:
+    - !stack_output_external pension-module-common-dev-vpc::PrivateSubnetAZ1
+    - !stack_output_external pension-module-common-dev-vpc::PrivateSubnetAZ2
+  Environment: dev
+  BuildNumber: !environment_variable ARTIFACT_NUMBER
+  AWSAccount: !environment_variable AWS_ACCOUNT
+  ApiAlias: v1

@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description:   role for lambdas
+Parameters: 
+  Environment:
+      Type: String
+      Description: Environment name
+
+Resources:
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: !Sub ${Environment}-lambda-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - apigateway.amazonaws.com
+      Policies:
+        - PolicyName: 'root'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - 'lambda:*'
+                  - 's3:Describe*'
+                  - 's3:Get*'
+                  - 'ec2:CreateNetworkInterface'
+                  - 'ec2:DescribeNetworkInterfaces'
+                  - 'ec2:DeleteNetworkInterface'
+                  - 'rds:Describe*'
+                Resource: '*'
+
+Outputs:
+  LambdaRoleRef:
+    Value: !Ref  LambdaRole
+  LambdaRoleArn:
+    Value: !GetAttLambdaRole.Arn
