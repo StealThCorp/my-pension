@@ -1,0 +1,9 @@
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\bin\Debug\netcoreapp2.2\MyPension.Core.deps.json
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\bin\Debug\netcoreapp2.2\MyPension.Core.dll
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\bin\Debug\netcoreapp2.2\MyPension.Core.pdb
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\obj\Debug\netcoreapp2.2\MyPension.Core.csprojAssemblyReference.cache
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\obj\Debug\netcoreapp2.2\MyPension.Core.csproj.CoreCompileInputs.cache
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\obj\Debug\netcoreapp2.2\MyPension.Core.AssemblyInfoInputs.cache
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\obj\Debug\netcoreapp2.2\MyPension.Core.AssemblyInfo.cs
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\obj\Debug\netcoreapp2.2\MyPension.Core.dll
+C:\Users\Arun Jose\source\repos\MyPension\MyPension.Core\obj\Debug\netcoreapp2.2\MyPension.Core.pdb
